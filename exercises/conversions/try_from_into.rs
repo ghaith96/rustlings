@@ -2,7 +2,7 @@
 // Basically, this is the same as From. The main difference is that this should return a Result type
 // instead of the target type itself.
 // You can read more about it at https://doc.rust-lang.org/std/convert/trait.TryFrom.html
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 #[derive(Debug)]
 struct Color {
@@ -10,8 +10,6 @@ struct Color {
     green: u8,
     blue: u8,
 }
-
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -26,6 +24,19 @@ struct Color {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let valid_range = 0..=255;
+        let is_range_valid = valid_range.contains(&tuple.0)
+            && valid_range.contains(&tuple.1)
+            && valid_range.contains(&tuple.2);
+        if is_range_valid {
+            Ok(Self {
+                red: tuple.0 as u8,
+                green: tuple.1 as u8,
+                blue: tuple.2 as u8,
+            })
+        } else {
+            Err(String::from("Wrong number of parameters"))
+        }
     }
 }
 
@@ -33,6 +44,17 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let valid_range = 0..=255;
+        let is_ranges_valid = arr.iter().all(|e| valid_range.contains(e));
+        if is_ranges_valid {
+            Ok(Color {
+                red: arr[0] as u8,
+                green: arr[1] as u8,
+                blue: arr[2] as u8,
+            })
+        } else {
+            Err(String::from("Wrong number of parameters"))
+        }
     }
 }
 
@@ -40,6 +62,19 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        let valid_range = 0..=255;
+        let is_valid_range = slice.iter().all(|e| valid_range.contains(e));
+        let is_valid_input = is_valid_range && slice.len() == 3;
+
+        if is_valid_input {
+            Ok(Self {
+                red: slice[0] as u8,
+                green: slice[1] as u8,
+                blue: slice[2] as u8,
+            })
+        } else {
+            Err(String::from("Wrong number of parameters"))
+        }
     }
 }
 
